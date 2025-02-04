@@ -198,106 +198,138 @@ tomex2.0_human_setup <- tomex2.0 %>%
   mutate(authors = word(authors,1,sep = ",")) %>% 
   arrange(authors) %>% 
   transform(article=as.numeric(factor(doi))+55) %>% 
-  relocate(article, .after = doi) %>%   
+  relocate(article, .after = doi) %>% 
   #Create factors for red criteria screening
   mutate(particle_red_criteria = factor(case_when(
-    is.na(particle.1) ~ "Scoring Not Available",
-    particle.1 == 0|particle.2 == 0|particle.3 == 0|particle.4 == 0 ~ "Fail",
-    particle.1 != 0 & particle.2 != 0 & particle.3 != 0 & particle.4 != 0 ~ "Pass"))) %>%
+    is.na(`particle 1`) ~ "Scoring Not Available",
+    `particle 1` == 0|`particle 2` == 0|`particle 3` == 0|`particle 4` == 0 ~ "Fail",
+    `particle 1` != 0 & `particle 2` != 0 & `particle 3` != 0 & `particle 4` != 0 ~ "Pass"))) %>%
   mutate(design_red_criteria = factor(case_when(
-    is.na(design.1) ~ "Scoring Not Available",
-    design.3 == 0|design.4 == 0|design.6 == 0|design.7 == 0|design.9 == 0|design.10 == 0|design.11 == 0 ~ "Fail",
-    design.3 != 0 & design.4 != 0 & design.6 != 0 & design.7 != 0 & design.9 != 0 & design.10 != 0 & (design.11 != 0|is.na(design.11)) ~ "Pass"))) %>% 
+    is.na(`design 1`) ~ "Scoring Not Available",
+    `design 3` == 0|`design 4` == 0|`design 6` == 0|`design 7` == 0|`design 9` == 0|`design 10` == 0|`design 11` == 0 ~ "Fail",
+    `design 3` != 0 & `design 4` != 0 & `design 6` != 0 & `design 7` != 0 & `design 9` != 0 & `design 10` != 0 & (`design 11` != 0|is.na(`design 11`)) ~ "Pass"))) %>% 
   mutate(risk_red_criteria = factor(case_when(
-    is.na(risk.1) ~ "Scoring Not Available",
-    risk.2 == 0|risk.3 == 0|risk.5 == 0 ~ "Fail",
-    risk.2 != 0 & risk.3 != 0 & risk.5 != 0 ~ "Pass"))) %>%  
+    is.na(`risk 1`) ~ "Scoring Not Available",
+    `risk 2` == 0|`risk 3` == 0|`risk 5` == 0 ~ "Fail",
+    `risk 2` != 0 & `risk 3` != 0 & `risk 5` != 0 ~ "Pass"))) %>%  
+  #rename scoring categories to match original structure
+  rename(
+    particle.1 = `particle 1`,
+    particle.2 = `particle 2`,
+    particle.3 = `particle 3`,
+    particle.4 = `particle 4`,
+    particle.5 = `particle 5`,
+    particle.6 = `particle 6`,
+    particle.7 = `particle 7`,
+    design.1 = `design 1`,
+    design.2 = `design 2`,
+    design.3 = `design 3`,
+    design.4 = `design 4`,
+    design.5 = `design 5`,
+    design.6 = `design 6`,
+    design.7 = `design 7`,
+    design.8 = `design 8`,
+    design.9 = `design 9`,
+    design.10 = `design 10`,
+    design.11 = `design 11`,
+    design.12 = `design 12`,
+    design.13 = `design 13`,
+    risk.1 = `risk 1`,
+    risk.2 = `risk 2`,
+    risk.3 = `risk 3`,
+    risk.4 = `risk 4`,
+    risk.5 = `risk 5`,
+    risk.6 = `risk 6`) %>% 
   #Move screening scores up
   relocate(98:130, .after = article) %>% 
   #Factor species
   mutate(species = factor(species)) %>% 
   rename(species_h_f = species) %>%
+  #Change in vitro life stage to NA
+  mutate(`life stage` = ifelse(`in vitro in vivo` == "In Vitro", NA, `life stage`)) %>% 
+  #Change in vitro sex to NA
+  mutate(sex = ifelse(`in vitro in vivo` == "In Vitro", NA, sex)) %>% 
   #Factor in vitro in vivo
-  mutate(in.vitro.in.vivo = factor(in.vitro.in.vivo)) %>% 
-  rename(vivo_h_f = in.vitro.in.vivo) %>%
+  mutate(`in vitro in vivo` = factor(`in vitro in vivo`)) %>% 
+  rename(vivo_h_f = `in vitro in vivo`) %>%
   #Factor life stage
-  mutate(life.stage = factor(life.stage)) %>% 
-  rename(life_h_f = life.stage) %>%
+  mutate(`life stage` = factor(`life stage`)) %>% 
+  rename(life_h_f = `life stage`) %>% 
   #Factor experiment type
-  mutate(experiment.type = factor(experiment.type)) %>% 
-  rename(exp_type_f = experiment.type) %>%
+  mutate(`experiment type` = factor(`experiment type`)) %>% 
+  rename(exp_type_f = `experiment type`) %>%
   #Factor exposure route
-  mutate(exposure.route = factor(exposure.route)) %>% 
-  rename(exposure_route_h_f = exposure.route) %>% 
+  mutate(`exposure route` = factor(`exposure route`)) %>% 
+  rename(exposure_route_h_f = `exposure route`) %>% 
   #Rename particle mix, reference particle, salinity, temp, exposure duration columns to match
   rename(treatment = treatments,
-         mix = `particle.mix.`,
-         reference.material = `reference.particle`,
-         media.sal = `media.salinity..ppt.`,
-         media.temp = `media.temp..mean.`,
-         exposure.duration.d = `exposure.duration..days.`) %>%
+         mix = `particle mix?`,
+         reference.material = `reference particle`,
+         media.sal = `media salinity (ppt)`,
+         media.temp = `media temp (mean)`,
+         exposure.duration.d = `exposure duration (days)`) %>%
   #Rename recovery column 
-  rename(`Recovery (Days)` = `recovery..days.`) %>% 
+  rename(`Recovery (Days)` = `recovery (days)`) %>% 
   relocate(`Recovery (Days)`, .after = exposure.duration.d) %>% 
   #Dosing restructuring #ONBOARDING CHECK - ADD UNITS AS NEEDED TO CASE_WHEN STATEMENTS#
   #Count - Nominal
   mutate(dose.particles.mL.nominal = case_when(
-    nominal.dose...particles.units == "p/mL" ~ nominal.dose...particles,
-    nominal.dose...particles.units == "particles/ml" ~ nominal.dose...particles,
-    nominal.dose...particles.units == "particles/mL" ~ nominal.dose...particles,
-    nominal.dose...particles.units == "particles/m3" ~ nominal.dose...particles/1000000,
-    nominal.dose...particles.units == "particles/L" ~ nominal.dose...particles/1000,
-    nominal.dose...particles.units == "particles/l" ~ nominal.dose...particles/1000,
-    nominal.dose...particles.units == "L" ~ nominal.dose...particles/1000
+    `nominal dose - particles units` == "p/mL" ~ `nominal dose - particles`,
+    `nominal dose - particles units` == "particles/ml" ~ `nominal dose - particles`,
+    `nominal dose - particles units` == "particles/mL" ~ `nominal dose - particles`,
+    `nominal dose - particles units` == "particles/m3" ~ `nominal dose - particles`/1000000,
+    `nominal dose - particles units` == "particles/L" ~ `nominal dose - particles`/1000,
+    `nominal dose - particles units` == "particles/l" ~ `nominal dose - particles`/1000,
+    `nominal dose - particles units` == "L" ~ `nominal dose - particles`/1000
   )) %>% 
-  relocate(dose.particles.mL.nominal, .after = sample.size) %>% 
+  relocate(dose.particles.mL.nominal, .after = `sample size`) %>% 
   #Count - Measured
   mutate(dose.particles.mL.measured = case_when(
-    measured.dose...particles.units == "p/mL" ~ measured.dose...particles,
-    measured.dose...particles.units == "particles/ml" ~ measured.dose...particles,
-    measured.dose...particles.units == "particles/mL" ~ measured.dose...particles,
-    measured.dose...particles.units == "particles/m3" ~ measured.dose...particles/1000000,
-    measured.dose...particles.units == "particles/L" ~ measured.dose...particles/1000,
-    measured.dose...particles.units == "particles/l" ~ measured.dose...particles/1000,
-    measured.dose...particles.units == "L" ~ measured.dose...particles/1000
+    `measured dose - particles units` == "p/mL" ~ `measured dose - particles`,
+    `measured dose - particles units` == "particles/ml" ~ `measured dose - particles`,
+    `measured dose - particles units` == "particles/mL" ~ `measured dose - particles`,
+    `measured dose - particles units` == "particles/m3" ~ `measured dose - particles`/1000000,
+    `measured dose - particles units` == "particles/L" ~ `measured dose - particles`/1000,
+    `measured dose - particles units` == "particles/l" ~ `measured dose - particles`/1000,
+    `measured dose - particles units` == "L" ~ `measured dose - particles`/1000
   )) %>% 
   relocate(dose.particles.mL.measured, .after = dose.particles.mL.nominal) %>% 
   #Mass - Nominal
   mutate(dose.mg.L.nominal = case_when(
-    nominal.dose...mass.units == "g/L" ~ nominal.dose...mass*1000,
-    nominal.dose...mass.units == "Kg/L" ~ nominal.dose...mass*1000000,
-    nominal.dose...mass.units == "mg/L" ~ nominal.dose...mass,
-    nominal.dose...mass.units == "mg/l" ~ nominal.dose...mass,
-    nominal.dose...mass.units == "ug/mL" ~ nominal.dose...mass,
-    nominal.dose...mass.units == "µg/mL" ~ nominal.dose...mass,
-    nominal.dose...mass.units == "ug/ml" ~ nominal.dose...mass,
-    nominal.dose...mass.units == "µg/ml" ~ nominal.dose...mass,
-    nominal.dose...mass.units == "g/mL" ~ nominal.dose...mass*1000000,
-    nominal.dose...mass.units == "mg/mL" ~ nominal.dose...mass*1000,
-    nominal.dose...mass.units == "ug/L" ~ nominal.dose...mass/1000,
-    nominal.dose...mass.units == "µg/L" ~ nominal.dose...mass/1000,
-    nominal.dose...mass.units == "ug/l" ~ nominal.dose...mass/1000,
-    nominal.dose...mass.units == "µg/l" ~ nominal.dose...mass/1000,
-    nominal.dose...mass.units == "ng/L" ~ nominal.dose...mass/1000000,
+    `nominal dose - mass units` == "g/L" ~ `nominal dose - mass`*1000,
+    `nominal dose - mass units` == "Kg/L" ~ `nominal dose - mass`*1000000,
+    `nominal dose - mass units` == "mg/L" ~ `nominal dose - mass`,
+    `nominal dose - mass units` == "mg/l" ~ `nominal dose - mass`,
+    `nominal dose - mass units` == "ug/mL" ~ `nominal dose - mass`,
+    `nominal dose - mass units` == "µg/mL" ~ `nominal dose - mass`,
+    `nominal dose - mass units` == "ug/ml" ~ `nominal dose - mass`,
+    `nominal dose - mass units` == "µg/ml" ~ `nominal dose - mass`,
+    `nominal dose - mass units` == "g/mL" ~ `nominal dose - mass`*1000000,
+    `nominal dose - mass units` == "mg/mL" ~ `nominal dose - mass`*1000,
+    `nominal dose - mass units` == "ug/L" ~ `nominal dose - mass`/1000,
+    `nominal dose - mass units` == "µg/L" ~ `nominal dose - mass`/1000,
+    `nominal dose - mass units` == "ug/l" ~ `nominal dose - mass`/1000,
+    `nominal dose - mass units` == "µg/l" ~ `nominal dose - mass`/1000,
+    `nominal dose - mass units` == "ng/L" ~ `nominal dose - mass`/1000000,
   )) %>% 
   relocate(dose.mg.L.nominal, .after = dose.particles.mL.nominal) %>% 
   #Mass - Measured
   mutate(dose.mg.L.measured = case_when(
-    measured.dose...mass.units == "g/L" ~ measured.dose...mass*1000,
-    measured.dose...mass.units == "Kg/L" ~ measured.dose...mass*1000000,
-    measured.dose...mass.units == "mg/L" ~ measured.dose...mass,
-    measured.dose...mass.units == "mg/l" ~ measured.dose...mass,
-    measured.dose...mass.units == "ug/mL" ~ measured.dose...mass,
-    measured.dose...mass.units == "µg/mL" ~ measured.dose...mass,
-    measured.dose...mass.units == "ug/ml" ~ measured.dose...mass,
-    measured.dose...mass.units == "µg/ml" ~ measured.dose...mass,
-    measured.dose...mass.units == "g/mL" ~ measured.dose...mass*1000000,
-    measured.dose...mass.units == "mg/mL" ~ measured.dose...mass*1000,
-    measured.dose...mass.units == "ug/L" ~ measured.dose...mass/1000,
-    measured.dose...mass.units == "µg/L" ~ measured.dose...mass/1000,
-    measured.dose...mass.units == "ug/l" ~ measured.dose...mass/1000,
-    measured.dose...mass.units == "µg/l" ~ measured.dose...mass/1000,
-    measured.dose...mass.units == "ng/L" ~ measured.dose...mass/1000000,
+    `measured dose - mass units` == "g/L" ~ `measured dose - mass`*1000,
+    `measured dose - mass units` == "Kg/L" ~ `measured dose - mass`*1000000,
+    `measured dose - mass units` == "mg/L" ~ `measured dose - mass`,
+    `measured dose - mass units` == "mg/l" ~ `measured dose - mass`,
+    `measured dose - mass units` == "ug/mL" ~ `measured dose - mass`,
+    `measured dose - mass units` == "µg/mL" ~ `measured dose - mass`,
+    `measured dose - mass units` == "ug/ml" ~ `measured dose - mass`,
+    `measured dose - mass units` == "µg/ml" ~ `measured dose - mass`,
+    `measured dose - mass units` == "g/mL" ~ `measured dose - mass`*1000000,
+    `measured dose - mass units` == "mg/mL" ~ `measured dose - mass`*1000,
+    `measured dose - mass units` == "ug/L" ~ `measured dose - mass`/1000,
+    `measured dose - mass units` == "µg/L" ~ `measured dose - mass`/1000,
+    `measured dose - mass units` == "ug/l" ~ `measured dose - mass`/1000,
+    `measured dose - mass units` == "µg/l" ~ `measured dose - mass`/1000,
+    `measured dose - mass units` == "ng/L" ~ `measured dose - mass`/1000000,
   )) %>% 
   relocate(dose.mg.L.measured, .after = dose.particles.mL.measured) %>% 
   #Create master columns for dose and count - measured doses preferred
@@ -321,23 +353,23 @@ tomex2.0_human_setup <- tomex2.0 %>%
     effect == "no" ~ "No"))) %>% 
   rename(effect_h_f = effect) %>%
   #Remove effect metrics when there are less than 3 treatments
-  mutate(effect.metric = as.character(effect.metric)) %>% 
-  mutate(effect.metric = factor(ifelse(treatment < 3, NA_character_, effect.metric))) %>% 
+  mutate(`effect metric` = as.character(`effect metric`)) %>% 
+  mutate(`effect metric` = factor(ifelse(treatment < 3, NA_character_, `effect metric`))) %>% 
   #Factor and rename endpoint columns
-  mutate(broad.endpoint.category = factor(broad.endpoint.category)) %>% 
-  rename(lvl1_h_f = broad.endpoint.category) %>%
-  mutate(specific.endpoint.category = factor(specific.endpoint.category)) %>% 
-  rename(lvl2_h_f = specific.endpoint.category) %>% 
-  mutate(endpoint = factor(endpoint)) %>% 
+  # mutate(`broad endpoint category` = factor(`broad endpoint category`)) %>% 
+  rename(lvl1_h_f = `broad endpoint category`) %>%
+  # mutate(`specific endpoint category` = factor(`specific endpoint category`)) %>% 
+  rename(lvl2_h_f = `specific endpoint category`) %>% 
+  # mutate(endpoint = factor(endpoint)) %>% 
   rename(lvl3_h_f = endpoint) %>% 
   #Factor and rename biological level of organization
-  mutate(level.of.biological.organization = factor(level.of.biological.organization)) %>% 
-  rename(bio_h_f = level.of.biological.organization) %>%  
+  mutate(`level of biological organization` = factor(`level of biological organization`)) %>% 
+  rename(bio_h_f = `level of biological organization`) %>%  
   #Rename target cell or tissue column
-  rename(target.organelle.cell.tissue = target.cell.or.tissue) %>% 
+  rename(target.organelle.cell.tissue = `target cell or tissue`) %>% 
   #Rename density column
-  rename(density.g.cm3 = density..g.cm.3.) %>% 
-  rename(density.reported.estimated = density..reported.estimated.) %>% 
+  rename(density.g.cm3 = `density (g/cm^3)`) %>% 
+  rename(density.reported.estimated = `density (reported/estimated)`) %>% 
   #Factor shape
   mutate(shape = factor(shape)) %>% 
   rename(shape_h_f = shape) %>%  
@@ -345,30 +377,36 @@ tomex2.0_human_setup <- tomex2.0 %>%
   mutate(polymer = factor(polymer)) %>% 
   rename(poly_h_f = polymer) %>% 
   #Rename zeta potential column
-  rename(zetapotential = zeta.potential..mv.,
-         zeta.potential.media = zeta.potential.media) %>% 
+  rename(zetapotential = `zeta potential (mv)`,
+         zeta.potential.media = `zeta potential media`) %>% 
   #Rename size columns
   rename(
-    size.length.min.mm.nominal = size.length.mm.nominal..minimum.,
-    size.length.max.mm.nominal = size.length.mm.nominal..maximum.,
-    size.length.min.mm.measured = size.length.mm.measured..minimum.,
-    size.length.max.mm.measured = size.length.mm.measured..maximum.,
+    size.length.mm.nominal = `size length mm nominal`,
+    size.length.min.mm.nominal = `size length mm nominal (minimum)`,
+    size.length.max.mm.nominal = `size length mm nominal (maximum)`,
+    size.length.mm.measured = `size length mm measured`,
+    size.length.min.mm.measured = `size length mm measured (minimum)`,
+    size.length.max.mm.measured = `size length mm measured (maximum)`,
     
-    size.width.min.mm.nominal = size.width.mm.nominal..minimum.,
-    size.width.max.mm.nominal = size.width.mm.nominal..maximum.,
-    size.width.min.mm.measured = size.width.mm.measured..minimum.,
-    size.width.max.mm.measured = size.width.mm.measured..maximum.,
+    size.width.mm.nominal = `size width mm nominal`,
+    size.width.min.mm.nominal = `size width mm nominal (minimum)`,
+    size.width.max.mm.nominal = `size width mm nominal (maximum)`,
+    size.width.mm.measured = `size width mm measured`,
+    size.width.min.mm.measured = `size width mm measured (minimum)`,
+    size.width.max.mm.measured = `size width mm measured (maximum)`,
     
-    size.height.min.mm.nominal = size.height.mm.nominal..minimum.,
-    size.height.max.mm.nominal = size.height.mm.nominal..maximum.,
-    size.height.min.mm.measured = size.height.mm.measured..minimum.,
-    size.height.max.mm.measured = size.height.mm.measured..maximum.) %>%
-  #Select size lengths to be used for conversions
-  mutate(size.length.um.used.for.conversions = case_when(
-    !is.na(size.length.mm.measured) ~ size.length.mm.measured*1000,
-    !is.na(size.length.min.mm.measured) ~ ((size.length.max.mm.measured + size.length.min.mm.measured)/2)*1000,
-    !is.na(size.length.mm.nominal) ~ size.length.mm.nominal*1000,
-    !is.na(size.length.min.mm.nominal) ~ ((size.length.max.mm.nominal + size.length.min.mm.nominal)/2)*1000)) %>% 
+    size.height.mm.nominal = `size height mm nominal`,
+    size.height.min.mm.nominal = `size height mm nominal (minimum)`,
+    size.height.max.mm.nominal = `size height mm nominal (maximum)`,
+    size.height.mm.measured = `size height mm measured`,
+    size.height.min.mm.measured = `size height mm measured (minimum)`,
+    size.height.max.mm.measured = `size height mm measured (maximum)`) %>%  
+#Select size lengths to be used for conversions
+mutate(size.length.um.used.for.conversions = case_when(
+  !is.na(size.length.mm.measured) ~ size.length.mm.measured*1000,
+  !is.na(size.length.min.mm.measured) ~ ((size.length.max.mm.measured + size.length.min.mm.measured)/2)*1000,
+  !is.na(size.length.mm.nominal) ~ size.length.mm.nominal*1000,
+  !is.na(size.length.min.mm.nominal) ~ ((size.length.max.mm.nominal + size.length.min.mm.nominal)/2)*1000)) %>% 
   relocate(size.length.um.used.for.conversions, .after = zeta.potential.media) %>% 
   #Select size widths to be used for conversions
   mutate(size.width.um.used.for.conversions = case_when(
@@ -376,7 +414,35 @@ tomex2.0_human_setup <- tomex2.0 %>%
     !is.na(size.width.min.mm.measured) ~ ((size.width.max.mm.measured + size.width.min.mm.measured)/2)*1000,
     !is.na(size.width.mm.nominal) ~ size.width.mm.nominal*1000,
     !is.na(size.width.min.mm.nominal) ~ ((size.width.max.mm.nominal + size.width.min.mm.nominal)/2)*1000)) %>% 
-  relocate(size.width.um.used.for.conversions, .after = size.length.um.used.for.conversions) %>% 
+  relocate(size.width.um.used.for.conversions, .after = size.length.um.used.for.conversions) 
+
+#### Tidying code from Maikke ####
+
+#seems like a lot of the values have a dragging error 
+#identified problems: 
+#	10.1016/j.ecoenv.2021.112964 ==> density should be 0.945
+# 10.1002/pat.3749 ==> should be 1.07
+
+tomex2.0_human_setup$density.g.cm3 <-ifelse(tomex2.0_human_setup$doi == "10.1016/j.ecoenv.2021.112964" , 0.945, tomex2.0_human_setup$density.g.cm3)
+tomex2.0_human_setup$density.g.cm3 <-ifelse(tomex2.0_human_setup$doi == "10.1002/pat.3749" , 1.070, tomex2.0_human_setup$density.g.cm3)
+
+tomex2.0_human_setup$density.g.cm3 <-ifelse(tomex2.0_human_setup$poly_h_f == "Polyvinylchloride" & is.na(tomex2.0_human_setup$density.g.cm3), 1.38, tomex2.0_human_setup$density.g.cm3)
+tomex2.0_human_setup$density.g.cm3 <-ifelse(tomex2.0_human_setup$poly_h_f == "Tire Rubber" & is.na(tomex2.0_human_setup$density.g.cm3), 1.45, tomex2.0_human_setup$density.g.cm3)
+tomex2.0_human_setup$density.g.cm3 <-ifelse(tomex2.0_human_setup$poly_h_f == "Polystyrene" & is.na(tomex2.0_human_setup$density.g.cm3), 1.07, tomex2.0_human_setup$density.g.cm3)
+tomex2.0_human_setup$density.g.cm3 <-ifelse(tomex2.0_human_setup$poly_h_f == "Polymethylmethacrylate" & is.na(tomex2.0_human_setup$density.g.cm3), 1.15, tomex2.0_human_setup$density.g.cm3)
+
+# >> larger than 1000 sounds suspicious
+tomex2.0_human_setup$size.length.um.used.for.conversions<-ifelse(tomex2.0_human_setup$doi == "10.1038/s41598-020-80708-0" & tomex2.0_human_setup$poly_h_f == "Polyvinylchloride", 0.11, tomex2.0_human_setup$size.length.um.used.for.conversions)
+tomex2.0_human_setup$size.length.um.used.for.conversions<-ifelse(tomex2.0_human_setup$doi == "10.1038/s41598-020-80708-0" & tomex2.0_human_setup$poly_h_f == "Polymethylmethacrylate", 0.15, tomex2.0_human_setup$size.length.um.used.for.conversions)
+
+#smalles ones are also suspicious
+tomex2.0_human_setup$size.length.um.used.for.conversions<-ifelse(tomex2.0_human_setup$doi == "10.1016/j.ecoenv.2019.110133", 5.45, tomex2.0_human_setup$size.length.um.used.for.conversions)
+
+tomex2.0_human_setup$size.length.um.used.for.conversions<-ifelse(tomex2.0_human_setup$doi == "10.1186/s42826-021-00109-w", 0.5, tomex2.0_human_setup$size.length.um.used.for.conversions)
+
+####
+
+tomex2.0_human_setup <- tomex2.0_human_setup %>% 
   #Add size category column 
   mutate(size_h_f = factor(case_when(
     size.length.um.used.for.conversions < 0.1 ~ "1nm < 100nm",
@@ -386,7 +452,7 @@ tomex2.0_human_setup <- tomex2.0 %>%
     size.length.um.used.for.conversions >= 1000 & size.length.um.used.for.conversions < 5000 ~ "1mm < 5mm",
     is.na(size.length.um.used.for.conversions) ~ "Not Reported"),  
     levels = c("1nm < 100nm", "100nm < 1µm", "1µm < 100µm", "100µm < 1mm", "Not Reported"))) %>% # creates new column with nicer names and order by size levels.
-  relocate(size_h_f, .after = size.width.um.used.for.conversions) %>% 
+  relocate(size_h_f, .after = size.width.um.used.for.conversions) %>%  
   #Calculate particle surface area
   mutate(particle.surface.area.um2 = case_when(shape_h_f == "Sphere" ~ 4*pi*((size.length.um.used.for.conversions/2)^2),
                                                shape_h_f == "Fiber" & is.na(size.width.um.used.for.conversions) ~ SAfnx_fiber(width = 15, length = size.length.um.used.for.conversions), #assum 15 um width (kooi et al 2021)
@@ -474,28 +540,28 @@ tomex2.0_human_setup <- tomex2.0 %>%
   mutate(dose.um2.ug.mL.master = dose.um2.mL.master / (mass.per.particle.mg / 1000)) %>% #correct mg to ug
   
   #Factor particle weathering
-  mutate(weathered.or.biofouled. = factor(weathered.or.biofouled.)) %>% 
+  mutate(weathered.or.biofouled. = factor(`weathered or biofouled?`)) %>% 
   #Rename columns to match/look nicer
   rename(dose.ug.mL.master = dose.mg.L.master,
          weathered.biofouled = weathered.or.biofouled.,
-         size.valid = size.validated.,
-         shape.valid = shape.validated.,
-         polymer.valid = polymer.validated.,
-         sodium.azide = sodium.azide.present.,
-         contaminant.screen = screened.for.chemical.contamination.,
-         clean.method = particle.cleaning.,
-         sol.rinse = solvent.rinse,
-         background.plastics = background.contamination.monitored.,
-         con.valid = concentration.validated.,
-         uptake.valid = uptake.validated.,
-         uptake.valid.method = uptake.validation.method,
-         fed = organisms.fed.,
-         `Nominal Dose Alternative Category` = `nominal.dose.alternative.category`,
-         `Nominal Dose Alternative Type` = `nominal.dose...alternative.type`,
-         `Nominal Dose Alternative Type Units` = `nominal.dose...alternative.type.units`,
-         `Measured Dose Alternative Category` = `measured.dose.alternative.category`,
-         `Measured Dose Alternative Type` = `measured.dose.alternative`,
-         `Measured Dose Alternative Type Units` = `measured.dose.alternative.units`) 
+         size.valid = `size validated?`,
+         shape.valid = `shape validated?`,
+         polymer.valid = `polymer validated?`,
+         sodium.azide = `sodium azide present?`,
+         contaminant.screen = `screened for chemical contamination?`,
+         clean.method = `particle cleaning?`,
+         sol.rinse = `solvent rinse`,
+         background.plastics = `background contamination monitored?`,
+         con.valid = `concentration validated?`,
+         uptake.valid = `uptake validated?`,
+         uptake.valid.method = `uptake validation method`,
+         fed = `organisms fed?`,
+         `Nominal Dose Alternative Category` = `nominal dose alternative category`,
+         `Nominal Dose Alternative Type` = `nominal dose - alternative type`,
+         `Nominal Dose Alternative Type Units` = `nominal dose - alternative type units`,
+         `Measured Dose Alternative Category` = `measured dose alternative category`,
+         `Measured Dose Alternative Type` = `measured dose alternative`,
+         `Measured Dose Alternative Type Units` = `measured dose alternative units`) 
 
 #Re-structure alternative dosing columns in human-setup
 human_setup <- human_setup %>%
@@ -532,7 +598,7 @@ human_setup <- human_setup %>%
              `Measured Dose Alternative Type Units` = NA_character_,
              `Nominal Dose Alternative Category` = NA_character_,
              `Measured Dose Alternative Category` = NA_character_,
-             effect.metric = NA_character_,
+             `effect metric` = NA_character_,
              measured.chemicals.added = NA_character_,
              measured.chemical.dose = NA_real_,
              measured.chemical.dose.units = NA_character_,
@@ -560,14 +626,33 @@ human_setup <- human_setup %>%
   mutate(zetapotential = as.character(zetapotential)) %>% 
   mutate(zeta.potential.media = as.character(zeta.potential.media))
   
- 
+tomex2.0_human_setup <- tomex2.0_human_setup %>%
+rename(negative.control = `negative control`,
+       exposure.media = `exposure media`,
+       media.ph = `media ph`,
+       media.temp.min = `media temp min`,
+       media.temp.max = `media temp max`,
+       dosing.frequency = `dosing frequency`,
+       sample.size = `sample size`,
+       #chemical dose stuff
+       nominal.chemicals.added = `nominal chemicals added`,
+       nominal.added.chemical.dose = `nominal added chemical dose`,
+       nominal.added.chemical.dose.units = `nominal added chemical dose units`,
+       measured.chemicals.added = `measured chemicals added`,
+       measured.chemical.dose = `measured chemical dose`,
+       measured.chemical.dose.units = `measured chemical dose units`,
+       functional.group = `functional group`,
+       particle.source = `particle source`,
+       particle.behavior = `particle behavior`,
+       tissue.distribution = `tissue distribution`) 
+
 #Get names of relevant columns from tomex 2.0
 names <- tomex2.0_human_setup %>%
-  select(-c(nominal.dose...mass, nominal.dose...mass.units, nominal.dose...particles, nominal.dose...particles.units, 
-            measured.dose...mass, measured.dose...mass.units, 
-            measured.dose...particles, measured.dose...particles.units, 
-            particle.total, design.total, risk.total, overall.total)) %>% 
-  colnames() 
+  select(-c(
+    `nominal dose - mass`, `nominal dose - mass units`, `nominal dose - particles`, `nominal dose - particles units`,`measured dose - mass`,
+    `measured dose - mass`, `measured dose - mass units`, `measured dose - particles`, `measured dose - particles units`,
+    `weathered or biofouled?`, `particle total`, `design total`, `risk total`, `overall total`)) %>% 
+  colnames()
 
 #Select columns from each data frame
 tomex2.0_human_setup <- tomex2.0_human_setup %>%
@@ -580,22 +665,317 @@ human_setup <- human_setup %>%
 #Join rows
 tomex2.0_human_setup_final <- bind_rows(human_setup, tomex2.0_human_setup)
 
-##### QA/QC - FLAGGING STUDIES ####
+#### Tidying Code from Maaike ####
 
-# tomex2.0_human_setup_final <- tomex2.0_human_setup_final %>%
-#   group_by(doi) %>% 
-#   mutate(`Issue Flag` = case_when(
-#     source == "ToMEx 2.0" & all(is.na(effect.metric)) & treatment >= 3 
-#     ~ "Effect metrics missing.")) %>%
-#   relocate(`Issue Flag`, .before = doi) %>% 
-#   ungroup() %>% 
-#   mutate(`Issue Flag` = case_when(
-#     !is.na(`Issue Flag`) ~ `Issue Flag`,
-#     source == "ToMEx 2.0" & exp_type_f == "Particle Only" & is.na(particle.1) 
-#     ~ "Screening scores need to be completed for Particle Only type data.",
-#     source == "ToMEx 2.0" & effect_h_f == "Yes" & is.na(direction)
-#     ~ "Detected effects missing direction."
-#   )) 
+tomex2.0_human_setup_final$lvl2_h_f  = fct_collapse(tomex2.0_human_setup_final$lvl2_h_f,
+                                               "DNA damage" = "DNA Damage",
+                                               "Immune other"= c("Immune Other", "Immune Other "), 
+                                               "Kidney Histological Abnormalities" = "Kidney Histological abnormalities")
+
+tomex2.0_human_setup_final$lvl2_h_f = fct_na_value_to_level(tomex2.0_human_setup_final$lvl2_h_f, "GI transit ratio")
+
+tomex2.0_human_setup_final$lvl3_h_f = fct_collapse(tomex2.0_human_setup_final$lvl3_h_f,
+                             "b Proteobacteria Genomic DNA" = "B Proteobacteria Genomic DNA",
+                             "Cytotoxicity"= c("Cytoxicity/ cell viability", "Cytoxicity"),
+                             "DNA damage" = "DNA Damage",
+                             "Endoplasmic Reticulum To Nucleus Signaling 1 (ERN1) concentration"= "Endoplasmic Reticulum to Nucleus Signaling 1 (ERN1) concentration",
+                             "Hexanoylcarnitine Concentration" = "Hexaoylcarnitine Concentration", 
+                             "Interferon gamma (ifng) Concentration" = "Interferon y Concentration", 
+                             "IL12b mRNA expression" = "Interleukin 12 (IL12b) mRNA expression", 
+                             "IL6 Concentration" = "Interleukin 6 Concentration",
+                             "Nucleus Cytoplasm Ratio"= "Nucleaus Cytoplasm Ratio", 
+                             "Reactive Oxygen Species Production" = "ROS Production",
+                             "claudin 1 mRNA expression"= "claudin1 mRNA expression",
+                             "claudin 11 protein expression"= "claudin11 protein expression", 
+                             "claudin 2 mRNA expression"= "claudin2 (cldn2) mRNA expression",
+                             "Nuclear factor kB (NFkB) mRNA expression" = "nfkB mRNA expression",
+                             "Nuclear factor kB (NFkB) protein expression" = "nfkB protein expression",
+                             "PPAR-y mRNA expression" = "ppar y mRNA expression",
+                             "Total Arm Entries" = "TOtal Arm Entries (5 min)", 
+                             "Transepithelial Electric Resistance" =  c("Transepithelial Electric Resistance (Intestinal)", "Transepithelial Electric Resistance (Respiratory)"), 
+                             "Protein Concentration"= "Protein concentration in urine", 
+                             "Hematocrit" = "Hematocrit (%)",
+                             "Caspase 1 mRNA expression"= "Cas1 mRNA expression", 
+                             "Collagen protein expression"= c("Callogen Protein Expression", "Callogen 3 Protein Expression"),
+                             "Beta Catenin Protein Expression" = c("Beta Catenin Protein Expression (Cardiovascular Tissue)", "Beta Catenin Protein Expression (Reproductive Tissue)"), 
+                             "Alpha Smooth Muscle Actin Protein Expression" = c("Alpha Smooth Muscle Actin Protein Expression (Cardiovascular Tissue)", "Alpha Smooth Muscle Actin Protein Expression (Reproductive Tissue)"), 
+                             "Fibronectin protein expression" = c("Fibronectin protein expression (Cardiovascular Tissue)","Fibronectin protein expression (Reproductive Tissue)"), 
+                             "Phosphorylated Beta Catenin Protein Expression" = c("Phosphorylated Beta Catenin Protein Expression (Cardiovascular Tissue)", "Phosphorylated Beta Catenin Protein Expression (Reproductive Tissue)"))
+
+
+tomex2.0_human_setup_final$lvl3_h_f = fct_na_value_to_level(tomex2.0_human_setup_final$lvl3_h_f, "Charcoal transit ratio")
+
+#Paper of Choi had some errors and target organell was mentioned in Endpoint and visa versa, so will be reversed
+#doi 10.3390/ijms22115845
+tomex2.0_human_setup_final$lvl3_h_f<-ifelse(tomex2.0_human_setup_final$doi == "10.3390/ijms22115845" & tomex2.0_human_setup_final$lvl3_h_f == "Large Intestine Histology", as.character(tomex2.0_human_setup_final$target.organelle.cell.tissue), as.character(tomex2.0_human_setup_final$lvl3_h_f))
+
+tomex2.0_human_setup_final$target.organelle.cell.tissue  = fct_collapse(tomex2.0_human_setup_final$target.organelle.cell.tissue,
+                                                      "intestine" = c("digestive.tract", "distal intestine", "gut", "intestines", "instestine", "proximal intestine"),
+                                                      "kidney" = c("kidney.left", "kidney.right"),
+                                                      "lung" = "lungs",
+                                                      "testis"= c("testis.left", "testis.right"),
+                                                      "adrenal.gland" = c("adrenal.gland.left", "adrenal.gland.right"),
+                                                      "ovary"=c("ovary.left", "ovary.right"),
+                                                      "prostate" = "prostate gland",
+                                                      "a549.cells" = "A459 cells", 
+                                                      "c2c12.cells" = "C2C12 cells",
+                                                      "caco2.cells" = "Caco-2 cells",
+                                                      "ht29.cells"= "HT-29 cells",
+                                                      "hepG2.cells"= c("HepG2 cells","hep2.cells", "hepg2.cells"),
+                                                      "iec18.cells" = c("IEC18 cells", "Goblet Cells"),
+                                                      "imr-90.cells"= "IMR-90 cells",
+                                                      "thp1.cells" = "THP-1 cells", 
+                                                      "liver.organoid"= "liver cells", 
+                                                      "peritoneal.macrophages"= "peritoneal.macrophages,bone",
+                                                      "large intestine" = c("Crypt Layer Thickness", "Flat Luminal Surface Thickness", "Mucosa Thickness", "Muscle Thickness"))
+
+#intestinal.Cell model ==> dependent on the paper
+#Bush (doi10.1016/j.envres.2020.110536) caco2HT29mtxe12thp1.cells
+tomex2.0_human_setup_final$target.organelle.cell.tissue<-ifelse(tomex2.0_human_setup_final$doi == "10.1016/j.envres.2020.110536" & tomex2.0_human_setup_final$target.organelle.cell.tissue == "intestinal.cell.model", "caco2HT29mtxe12thp1.cells", 
+                                                as.character(tomex2.0_human_setup_final$target.organelle.cell.tissue))
+
+#Lehner (doi 10.1007/s00204-020-02750-1) caco2HT29mtxe12mddcmdm.cells
+tomex2.0_human_setup_final$target.organelle.cell.tissue<-ifelse(tomex2.0_human_setup_final$doi == "10.1007/s00204-020-02750-1" & tomex2.0_human_setup_final$target.organelle.cell.tissue == "intestinal.cell.model", 
+                                              "caco2HT29mtxe12mddcmdm.cells", as.character(tomex2.0_human_setup_final$target.organelle.cell.tissue))
+
+#one error found as 'charcoal transit ratio' is not organell/tissue/cell ==> changed to intestine
+tomex2.0_human_setup_final$target.organelle.cell.tissue<-ifelse(tomex2.0_human_setup_final$target.organelle.cell.tissue == "Charcoal Transit Ratio", 
+                                              "intestine", as.character(tomex2.0_human_setup_final$target.organelle.cell.tissue))
+
+#to ensure differentiation between skin and eye irritation test of Kim et al. 
+Kim<-tomex2.0_human_setup_final%>%
+  filter(doi == "10.1016/j.ecoenv.2021.112964", vivo_h_f == "In Vitro" )
+
+Kim$target.organelle.cell.tissue[1]<- "skin"
+Kim$target.organelle.cell.tissue[2]<- "eye"
+
+tomex2.0_human_setup_final<-tomex2.0_human_setup_final%>%
+  filter(doi != "10.1016/j.ecoenv.2021.112964" | vivo_h_f != "In Vitro")%>%
+  bind_rows(Kim)
+
+
+# NAs
+tomex2.0_human_setup_final$target.organelle.cell.tissue  = fct_na_value_to_level(tomex2.0_human_setup_final$target.organelle.cell.tissue , "not_reported")
+
+###Cytotoxicity/Cell viability (endpoint) is categorized in both ‘cell growth and proliferation’ and cytotoxicity (broad category)
+##solution: put all cytotoxicity/cell viability under cytotoxicity
+tomex2.0_human_setup_final$lvl1_h_f<-ifelse(tomex2.0_human_setup_final$lvl3_h_f == "Cytotoxicity", "Cytotoxicity", as.character(tomex2.0_human_setup_final$lvl1_h_f))
+
+### NFkB (Endpoint) is mentioned both in immune as in stress (in both specific and broad)
+##solution: put all NFkB with immune
+tomex2.0_human_setup_final$lvl1_h_f<-ifelse(tomex2.0_human_setup_final$lvl3_h_f == c("Nuclear factor kB (NFkB) mRNA expression", 
+                                                      "Nuclear factor kB (NFkB) protein expression", "nfkb1 mRNA expression",
+                                                      "nfkbp75 protein expression","p-nfkB protein expression","p-nfkB/nfkB Ratio protein expression",
+                                                      "p-nfkbp75 protein expression"),
+                                    "Immune", as.character(tomex2.0_human_setup_final$lvl1_h_f))
+
+tomex2.0_human_setup_final$lvl2_h_f<-ifelse(tomex2.0_human_setup_final$lvl3_h_f == c("Nuclear factor kB (NFkB) mRNA expression", 
+                                                         "Nuclear factor kB (NFkB) protein expression", "nfkb1 mRNA expression",
+                                                         "nfkbp75 protein expression","p-nfkB protein expression","p-nfkB/nfkB Ratio protein expression",
+                                                         "p-nfkbp75 protein expression"),
+                                       "Inflammation", as.character(tomex2.0_human_setup_final$lvl2_h_f))
+
+### Oxidative stress is categorized both in metabolism and stress
+##solution: Put this under metabolism
+tomex2.0_human_setup_final$lvl1_h_f<-ifelse(tomex2.0_human_setup_final$lvl2_h_f == "Oxidative Stress", "Metabolism", as.character(tomex2.0_human_setup_final$lvl1_h_f))
+
+tomex2.0_human_setup_final$mix = fct_collapse(tomex2.0_human_setup_final$mix,
+                                 "no"= c("N", "No"),
+                                 "yes"= c("Y", "Yes"))
+
+tomex2.0_human_setup_final$negative.control = fct_collapse(tomex2.0_human_setup_final$negative.control,
+                                    "no"= c("N", "No"),
+                                    "yes"= c("Y", "Yes"))
+
+tomex2.0_human_setup_final$reference.material = fct_collapse(tomex2.0_human_setup_final$reference.material,
+                                      "no"= c("N", "No"),
+                                      "yes"= c("Y", "Yes"))
+
+tomex2.0_human_setup_final$exposure.media.general = fct_collapse(tomex2.0_human_setup_final$exposure.media,
+                                          "artificial_medium" = c("DMEM", "culture medium DMEM", "LHC-9 medium","culture medium DMEMF12", "culture media", "culture medium", "RPMI 1610 medium", 
+                                                                  "dulbecco modified eagle medium" , "DMEM high glucose", "endothelial medium","HamsF12", "MEM", 
+                                                                  "dulbecco modified eagle medium F-12", "EBM2","DMEM egf", "DMEM medium","eagles minimal essential medium", 
+                                                                  "Kaighns modification Hams F12 medium" , "culture medium 106", "dulbecco modified eagle media","phenol red free medium", 
+                                                                  "eagles minimum essential medium", "minimum essential media", "bronchial epithelial growth medium", 
+                                                                  "dulbeccos modified minimal medium", "MCDB131 medium", "eagle minimal essential medium", "roswell park memorial institute serum-free medium", 
+                                                                  "rpmi1640 medium", "Neurobasal medium with B-27, Glutamax and ATRA", "RPMI 1640 Medium", "cell growth medium", "IMDM", 
+                                                                  "DMEM high glucose (10% FBS)","DMEM medium supplemented with 10% FBS, penicillin (100 U/mL) and streptomycin (0.1 mg/mL)  with 5% CO2.", 
+                                                                  "DMEM with 10%FBS and antibiotic/antimycotic", "RPMI 1640 (2% FBS)", "RPMI 1640 (10% FBS)","roswell park memorial institute 1640 medium", "serum-free culture medium"),
+                                          "water" = c("water", "saline water", "reverse osmosis water", "pure water", "drinking water", "double distilled water", "distilled water", "deionized water", 
+                                                      "RO water", "Milli-Q water"),
+                                          "other" =  c("Corn Oil", "bronchoalveolar lavage fluid", "carboxymethylcellulose"),
+                                          "food"= c("food", "basal feed"),
+                                          "pbs"= c("Phospate Buffered Saline", "dulbecco phosphate buffered saline", "phosphate buffer saline"), 
+                                          "serum" = c("blood", "human serum", "pig serum", "serum"))
+
+tomex2.0_human_setup_final$exposure.media.general<-ifelse(tomex2.0_human_setup_final$doi == "10.1016/j.ecoenv.2021.112964" & is.na(tomex2.0_human_setup_final$exposure.media), "none", as.character(tomex2.0_human_setup_final$exposure.media.general))
+tomex2.0_human_setup_final$exposure.media.general<-ifelse(tomex2.0_human_setup_final$doi  == "10.1021/nn700256c" & is.na(tomex2.0_human_setup_final$exposure.media), "air", as.character(tomex2.0_human_setup_final$exposure.media.general))
+tomex2.0_human_setup_final$exposure.media.general<-ifelse(tomex2.0_human_setup_final$doi  == "10.2147/IJN.S161369" & is.na(tomex2.0_human_setup_final$exposure.media), "serum", as.character(tomex2.0_human_setup_final$exposure.media.general))
+
+tomex2.0_human_setup_final$exposure.media.specific = fct_collapse(tomex2.0_human_setup_final$exposure.media,
+                                           "DMEM" = c("DMEM", "DMEM egf", "DMEM high glucose", "DMEM high glucose (10% FBS)", "DMEM medium",
+                                                      "DMEM medium supplemented with 10% FBS, penicillin (100 U/mL) and streptomycin (0.1 mg/mL)  with 5% CO2.", 
+                                                      "DMEM with 10%FBS and antibiotic/antimycotic", "culture medium DMEM", "dulbecco modified eagle media", 
+                                                      "dulbecco modified eagle medium", "dulbeccos modified minimal medium"), 
+                                           "HamsF12"= "Kaighns modification Hams F12 medium", 
+                                           "LHC-9" = "LHC-9 medium", 
+                                           "MCDB131" = "MCDB131 medium", 
+                                           "MEM" = c("eagle minimal essential medium", "eagles minimal essential medium", "eagles minimum essential medium", "minimum essential media"), 
+                                           "Neurobasal medium" = "Neurobasal medium with B-27, Glutamax and ATRA",
+                                           "pbs"= c("Phospate Buffered Saline", "dulbecco phosphate buffered saline", "phosphate buffer saline"),
+                                           "RO water" = "reverse osmosis water", 
+                                           "RPMI 1610" = c("RPMI 1610 medium","RPMI 1640 (10% FBS)", "RPMI 1640 (2% FBS)", "RPMI 1640 Medium", "phenol red free medium",
+                                                           "roswell park memorial institute 1640 medium", "roswell park memorial institute serum-free medium", 
+                                                           "rpmi1640 medium", "serum-free culture medium"),
+                                           "BEGM" = "bronchial epithelial growth medium", 
+                                           "not_specified" = c("cell growth medium", "culture medium", "culture medium 106"), 
+                                           "DMEMF12"= c("culture medium DMEMF12", "dulbecco modified eagle medium F-12"),
+                                           "distilled water" = "double distilled water", 
+                                           "DPBS" = "dulbecco phosphate buffered saline",
+                                           "water" = c("pure water","drinking water","water"),
+                                           "Ultrapure water" =  "saline water", 
+                                           "Human serum" =  "serum")
+
+# Three extra publications  
+tomex2.0_human_setup_final$exposure.media.specific<-ifelse(tomex2.0_human_setup_final$doi == "10.1177/15593258211019882" & tomex2.0_human_setup_final$exposure.media == "culture media", "not_specified", as.character(tomex2.0_human_setup_final$exposure.media.specific))
+tomex2.0_human_setup_final$exposure.media.specific<-ifelse(tomex2.0_human_setup_final$doi == "10.1016/j.biomaterials.2016.01.064" & tomex2.0_human_setup_final$exposure.media == "culture media" & tomex2.0_human_setup_final$target.organelle.cell.tissue == "m1.macrophages", "CFS2", as.character(tomex2.0_human_setup_final$exposure.media.specific))
+tomex2.0_human_setup_final$exposure.media.specific<-ifelse(tomex2.0_human_setup_final$doi == "10.1016/j.biomaterials.2016.01.064" & tomex2.0_human_setup_final$exposure.media == "culture media" & tomex2.0_human_setup_final$target.organelle.cell.tissue == "m2.macrophages", "CFS1", as.character(tomex2.0_human_setup_final$exposure.media.specific))
+
+# NAs 
+#one publication didn't use any exposure medium and used exposure to powder ==> none
+tomex2.0_human_setup_final$exposure.media.specific<-ifelse(tomex2.0_human_setup_final$doi == "10.1016/j.ecoenv.2021.112964" & is.na(tomex2.0_human_setup_final$exposure.media), "none", as.character(tomex2.0_human_setup_final$exposure.media.specific))
+tomex2.0_human_setup_final$exposure.media.specific<-ifelse(tomex2.0_human_setup_final$doi == "10.1021/nn700256c" & is.na(tomex2.0_human_setup_final$exposure.media), "air", as.character(tomex2.0_human_setup_final$exposure.media.specific))
+tomex2.0_human_setup_final$exposure.media.specific<-ifelse(tomex2.0_human_setup_final$doi == "10.2147/IJN.S161369" & is.na(tomex2.0_human_setup_final$exposure.media), "human serum", as.character(tomex2.0_human_setup_final$exposure.media.specific))
+
+
+
+##Exposure Medium Additions
+##creating new column
+tomex2.0_human_setup_final$exposure.media.additions <-ifelse(tomex2.0_human_setup_final$exposure.media == "DMEM egf" , "EGF", 
+                                      ifelse(tomex2.0_human_setup_final$exposure.media ==  "DMEM high glucose" , "GLUCOSEhigh", 
+                                             ifelse(tomex2.0_human_setup_final$exposure.media == "DMEM high glucose (10% FBS)", "GLUCOSEhigh.FBS10", 
+                                                    ifelse(tomex2.0_human_setup_final$exposure.media == "DMEM medium upplemented with 10% FBS, penicillin (100 U/mL) and streptomycin (0.1 mg/mL)  with 5% CO2.", "FBS10.PEN.STREP", 
+                                                           ifelse(tomex2.0_human_setup_final$exposure.media == "DMEM with 10%FBS and antibiotic/antimycotic", "FBS10.ANTIBIOTICMYTOTIC",
+                                                                  ifelse(tomex2.0_human_setup_final$exposure.media =="Kaighns modification Hams F12 medium", "KAIGNSmodification",
+                                                                         ifelse(tomex2.0_human_setup_final$exposure.media =="Neurobasal medium with B-27, Glutamax and ATRA", "B27.Glutamax.ATRA",
+                                                                                ifelse(tomex2.0_human_setup_final$exposure.media == "RPMI 1640 (10% FBS)", "FBS10",
+                                                                                       ifelse(tomex2.0_human_setup_final$exposure.media =="RPMI 1640 (2% FBS)", "FBS2", 
+                                                                                              ifelse(tomex2.0_human_setup_final$exposure.media =="phenol red free medium", "FCS10.PEN.STREP", "not_specified"))))))))))
+
+#NA
+tomex2.0_human_setup_final$exposure.media.additions = fct_na_value_to_level(tomex2.0_human_setup_final$exposure.media.additions, "not_specified")
+
+tomex2.0_human_setup_final$solvent = fct_collapse(tomex2.0_human_setup_final$solvent,
+                           "Phosphate Buffered Saline"="PBS")
+
+tomex2.0_human_setup_final$solvent = fct_na_value_to_level(tomex2.0_human_setup_final$solvent, "not_reported")
+
+tomex2.0_human_setup_final$detergent = fct_collapse(tomex2.0_human_setup_final$detergent ,
+                             "SDS"= c("SDS", "sodium dodecyl\nsulphate (SDS) (0.4%)"))
+# NAs
+tomex2.0_human_setup_final$detergent  = fct_na_value_to_level(tomex2.0_human_setup_final$detergent , "not_reported")
+
+#fixing mistake in Li et al.
+tomex2.0_human_setup_final$exposure.duration.d <-ifelse(tomex2.0_human_setup_final$doi == "10.1016/j.jhazmat.2020.123933", 1, tomex2.0_human_setup_final$exposure.duration.d)
+
+
+#NA's 
+# Jeon 10.1016/j.envpol.2021.117006
+tomex2.0_human_setup_final$exposure.duration.d<-ifelse(tomex2.0_human_setup_final$doi == "10.1016/j.envpol.2021.117006", 0.020833333 , tomex2.0_human_setup_final$exposure.duration.d)
+
+#Kim 10.1016/j.ecoenv.2021.112964
+tomex2.0_human_setup_final$exposure.duration.d<-ifelse(tomex2.0_human_setup_final$doi == "10.1016/j.ecoenv.2021.112964" & tomex2.0_human_setup_final$vivo_h_f == "In Vivo", 14 , tomex2.0_human_setup_final$exposure.duration.d)
+tomex2.0_human_setup_final$exposure.duration.d<-ifelse(tomex2.0_human_setup_final$doi == "10.1016/j.ecoenv.2021.112964" & tomex2.0_human_setup_final$vivo_h_f == "In Vitro" & tomex2.0_human_setup_final$target.organelle.cell.tissue == "skin", 0.02083 , tomex2.0_human_setup_final$exposure.duration.d)
+tomex2.0_human_setup_final$exposure.duration.d<-ifelse(tomex2.0_human_setup_final$doi == "10.1016/j.ecoenv.2021.112964" & tomex2.0_human_setup_final$vivo_h_f == "In Vitro" & tomex2.0_human_setup_final$target.organelle.cell.tissue == "eye", 0.125 , tomex2.0_human_setup_final$exposure.duration.d)
+
+#Shengchen 10.1016/j.jhazmat.2021.125962
+tomex2.0_human_setup_final$exposure.duration.d<-ifelse(tomex2.0_human_setup_final$doi == "10.1016/j.jhazmat.2021.125962", 30 , tomex2.0_human_setup_final$exposure.duration.d)
+
+tomex2.0_human_setup_final$`Recovery (Days)` <- ifelse(is.na(tomex2.0_human_setup_final$`Recovery (Days)`), 0, tomex2.0_human_setup_final$`Recovery (Days)`)
+
+tomex2.0_human_setup_final$dosing.frequency <- ifelse(is.na(tomex2.0_human_setup_final$dosing.frequency), 1, as.numeric(tomex2.0_human_setup_final$dosing.frequency))
+
+tomex2.0_human_setup_final$nominal.chemicals.added = fct_collapse(tomex2.0_human_setup_final$nominal.chemicals.added,
+                                          "dextran sodium sulfate" = "dextran sodium sulfate - induce actue colitis")
+
+
+#fixing error in MitoTEMPO that was registered with nominal dose
+tomex2.0_human_setup_final$nominal.chemicals.added<-ifelse(tomex2.0_human_setup_final$`Nominal Dose Alternative Category` == "MitoTEMPO" &  !is.na(tomex2.0_human_setup_final$`Nominal Dose Alternative Category`), "MitoTEMPO", as.character(tomex2.0_human_setup_final$nominal.chemicals.added))
+tomex2.0_human_setup_final$`Nominal Dose Alternative Category` <-ifelse(tomex2.0_human_setup_final$`Nominal Dose Alternative Category` == "MitoTEMPO"& !is.na(tomex2.0_human_setup_final$`Nominal Dose Alternative Category`), NA, as.character(tomex2.0_human_setup_final$`Nominal Dose Alternative Category`))
+
+# NAs
+#not_applicable if effect if particle only or leachate study
+tomex2.0_human_setup_final$nominal.chemicals.added<-ifelse(tomex2.0_human_setup_final$exp_type_f == "Leachate" | tomex2.0_human_setup_final$exp_type_f == "Particle Only" , "not_applicable", as.character(tomex2.0_human_setup_final$nominal.chemicals.added))
+
+tomex2.0_human_setup_final$zetapotential<-ifelse(tomex2.0_human_setup_final$doi == "10.1016/j.biomaterials.2011.07.037" & tomex2.0_human_setup_final$zetapotential == -16.35, -23.6, 
+                                ifelse(tomex2.0_human_setup_final$doi == "10.1016/j.biomaterials.2011.07.037" & tomex2.0_human_setup_final$zetapotential == 20.15, 3.7,
+                                       ifelse(tomex2.0_human_setup_final$doi == "10.1016/j.biomaterials.2011.07.037" & tomex2.0_human_setup_final$zetapotential == 25, 4.2,
+                                              ifelse(tomex2.0_human_setup_final$doi == "10.1016/j.biomaterials.2011.07.037" & tomex2.0_human_setup_final$zetapotential == -28.85, -23.7,
+                                                     ifelse(tomex2.0_human_setup_final$doi == "10.1016/j.biomaterials.2011.07.037" & tomex2.0_human_setup_final$zetapotential == 21.75, 5.6,
+                                                            ifelse(tomex2.0_human_setup_final$doi == "10.1016/j.biomaterials.2011.07.037" & tomex2.0_human_setup_final$zetapotential == -30.2, -21.9,tomex2.0_human_setup_final$zetapotential))))))
+
+tomex2.0_human_setup_final$zeta.potential.media = fct_collapse(tomex2.0_human_setup_final$zeta.potential.media,
+                                        "artificial.medium" =c("DMEM", "DMEM high glucose", "assay.media", "culture.medium.capillary.cells", 
+                                                               "dulbecco.modified.eagle.medium", "rpmi1640 medium", "distilled.water.DMEM"), 
+                                        "water" = c("Water", "aqueous.solution", "distilled water", "ultrapure water"), 
+                                        "PBS" = c("phosphate.buffer.saline", "phosphate.buffed.saline"))
+
+# NAs
+tomex2.0_human_setup_final$zeta.potential.media  = fct_na_value_to_level(tomex2.0_human_setup_final$zeta.potential.media, "not_reported")
+
+tomex2.0_human_setup_final$functional.group = fct_collapse(tomex2.0_human_setup_final$functional.group,
+                                    "COOH" =c("COOH", "COOH,protein.coat"), 
+                                    "NH2" = c("NH2", "NH2,protein.coat"), 
+                                    "protein.coat"= "NA,protein.coat", 
+                                    "peg-mannose" = "peg-m")
+
+# NAs
+tomex2.0_human_setup_final$functional.group  = fct_na_value_to_level(tomex2.0_human_setup_final$functional.group , "not_reported")
+
+tomex2.0_human_setup_final$particle.source = fct_collapse(tomex2.0_human_setup_final$particle.source,
+                                   "environmental" = c("Environmental",  "Field collected"),
+                                   "not_reported" = c("N",  "No"),
+                                   "commercial" = "Commercial") 
+
+tomex2.0_human_setup_final$sodium.azide = fct_collapse(tomex2.0_human_setup_final$sodium.azide,
+                                         "no" =  c("N",  "No"),
+                                         "yes" = c("Y",  "Yes"))
+
+# NAs
+tomex2.0_human_setup_final$sodium.azide = fct_na_value_to_level(tomex2.0_human_setup_final$sodium.azide, "unknown")
+
+
+tomex2.0_human_setup_final$clean.method = fct_collapse(tomex2.0_human_setup_final$clean.method,
+                                      "not_cleaned" = c("N",  "No", "Not Cleaned"),
+                                      "centrifugal_filter" = c("centrifugal filter",  "dialysis", "amiconultrafiltration dialysis washing"),
+                                      "rinse" = c("centrifugation rinse",  "rinse", "rinse dialyzed"),
+                                      "ultrasonic" = c("ultrasonic extraction", "Ultrasonic vibration"))
+
+tomex2.0_human_setup_final$sol.rinse = fct_collapse(tomex2.0_human_setup_final$sol.rinse,
+                                 "none" = c("N",  "No"),
+                                 "distilled water" = "distillled water", 
+                                 "ultrapure water" = "ultrapurewater", 
+                                 "acid-base-ethanol" =  "NaOH NaOH HCl HCl Ethanol", 
+                                 "methanol-based" = c("methanol",  "methanol ethyleneoxidegas", "methanol saline"))
+# NAs
+tomex2.0_human_setup_final$sol.rinse = fct_na_value_to_level(tomex2.0_human_setup_final$sol.rinse, "none")
+
+tomex2.0_human_setup_final$particle.behavior = fct_collapse(tomex2.0_human_setup_final$particle.behavior,
+                                     "not_evaluated" = c("polydispersity index quantified", "sedimentation experiment", "sonicated", "vortexing", "vortexing agglomeration chracterization", 
+                                                         "FBS-supplemented DMEM used as hydorphobic media to ensure dispersion", 
+                                                         "dynamic light scattering aggregtion quantified"),
+                                     "aggregates" = c("aggregates observed", "aggregation on leukocytes observed"),
+                                     "uniformly_dispersed" = c( "aggregation quantified no aggregation observed", "no aggregation observed"),
+                                     "not_evaluated" = c("No", "not evaluated", "Not Evaluated"))
+
+# NAs
+tomex2.0_human_setup_final$particle.behavior = fct_na_value_to_level(tomex2.0_human_setup_final$particle.behavior, "not_evaluated")
+
+#Add factors in 
+tomex2.0_human_setup_final <- tomex2.0_human_setup_final %>% 
+  mutate(lvl1_h_f = factor(lvl1_h_f)) %>% 
+  mutate(lvl2_h_f = factor(lvl2_h_f)) %>%
+  mutate(lvl3_h_f = factor(lvl3_h_f))
 
 #Save RDS file
 saveRDS(tomex2.0_human_setup_final, file = "human_setup_tomex2.RDS")
@@ -615,7 +995,7 @@ tomex2.0_human_search_final <- tomex2.0_human_setup_final %>%
   #general
   dplyr::select(source, doi, authors, year, species_h_f, life_h_f, vivo_h_f, sex,
                 #experimental parameters
-                exp_type_f, exposure_route_h_f, mix, negative.control, reference.material, exposure.media, solvent, detergent,
+                exp_type_f, exposure_route_h_f, mix, negative.control, reference.material, exposure.media.general, exposure.media.specific, exposure.media.additions, solvent, detergent,
                 media.ph, media.sal, media.temp, media.temp.min, media.temp.max, exposure.duration.d, `Recovery (Days)`,
                 treatment, replicates, sample.size, dosing.frequency, 
                 #master doses
@@ -643,7 +1023,9 @@ tomex2.0_human_search_final <- tomex2.0_human_setup_final %>%
   rename('Source' = source,'DOI' = doi,'Authors' = authors, 'Year' = year, 'Species' = species_h_f, 'Life Stage' = life_h_f, 'In Vitro or In Vivo?' = vivo_h_f, 'Sex' = sex,
          
          'Experiment Type' = exp_type_f, 'Exposure Route' = exposure_route_h_f, 'Particle Mix?' = mix, 'Negative Control' = negative.control, 
-         'Reference Particle' = reference.material, 'Exposure Media' = exposure.media, 'Solvent' = solvent, 'Detergent' = detergent, 
+         'Reference Particle' = reference.material, 'Exposure Media General' = exposure.media.general,
+         'Exposure Media Specific' = exposure.media.specific, 'Exposure Media Additions' = exposure.media.additions,
+         'Solvent' = solvent, 'Detergent' = detergent, 
          'pH' = media.ph, 'Salinity (ppt)' = media.sal, 'Temperature (Avg)' = media.temp, 'Temperature (Min)' = media.temp.min,
          'Temperature (Max)' = media.temp.max, 'Exposure Duration (days)' = exposure.duration.d, 'Number of Doses' = treatment, 'Replicates' = replicates,
          'Sample Size' = sample.size, 'Dosing Frequency' = dosing.frequency,
@@ -755,26 +1137,3 @@ saveRDS(tomex2.0_human_quality_final, file = "human_quality_tomex2.RDS")
 
 
 #End of Script
-
-#quick stats
-library(tidyverse)
-
-# pubs <- as.data.frame(unique(human_setup_tomex2$doi))
-# 
-# study_types <- human_setup_tomex2 %>%
-#   group_by(doi, exp_type_f) %>% 
-#   summarise()
-# 
-# vivo <- human_setup_tomex2 %>% 
-#   filter(vivo_h_f == "In Vivo")
-# 
-# species <- human_setup_tomex2 %>%
-#   group_by(species_h_f) %>% 
-#   summarise()
-# 
-# not_tidy <- tomex2.0_human_setup_final %>% 
-#   filter(!is.na(`Issue Flag`)) 
-# 
-# not_tidy_studies <- not_tidy %>% 
-#   group_by(source, doi,authors,`Issue Flag`) %>% 
-#   summarise() 
