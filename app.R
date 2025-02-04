@@ -1042,13 +1042,21 @@ tabItem(tabName = "Screening",
 tabItem(tabName = "Resources", 
         
         
-        box(title = "Resources", width = 6, status = "primary",     
-            p(align = "center",a(href = "https://sccwrp-my.sharepoint.com/:b:/g/personal/leahth_sccwrp_org/EeyE7n7JZdJPi_EYUD_D-dsBxNv5qlBtzwihmr9SbxH_Og?e=88hiV8", 'Data Category Descriptions')),
+        box(title = "Resources", width = 12, status = "primary",     
+            h4(align = "left", "Data Submission Template:"),
+            
+            h5(align = "left",a(href = "https://sccwrp-my.sharepoint.com/:x:/g/personal/leahth_sccwrp_org/Ed57oSPIsN1Pnm7ZPHmWtE0BI3w2oBieUDSMUCJ71urA_g?e=LaO20J", 'Data Mining Template')),
             br(),
-            p(align = "center",a(href = "https://sccwrp-my.sharepoint.com/:b:/g/personal/leahth_sccwrp_org/EQ2GRL8-CB9NnYjqkB7_avABMy-gxRtMSsxD19VUe-0Rsg?e=nESD3x", 'Study Screening Rubric')),
-            br(),
-            p(align = "center",a(href = "https://sccwrp-my.sharepoint.com/:b:/g/personal/leahth_sccwrp_org/EXz5dUQtgKVMuB79N6YcwasBhKYwO1uhRAQRqumnRqSQuQ?e=OhOO6L", 'Human Health Study List')),
-        )           
+            h4(align = "left", "Data Category Descriptions and Data Mining Guides:"),
+            
+            h5(align = "left",a(href = "https://sccwrp-my.sharepoint.com/:b:/g/personal/leahth_sccwrp_org/EZbjt-0WJNZOlGzUx-Ek7AgByD8PzuzgsoEx2U7ZMK0kiw?e=h6eqts", 'Particle Only Studies')),
+            
+            h5(align = "left",a(href = "https://sccwrp-my.sharepoint.com/:b:/g/personal/leahth_sccwrp_org/EeAZTgIRfeRMmtupFP_ybN0B6TuDRo603mwPxK6MqPlVyw?e=sW7wFE", 'Leachate Studies')),
+            
+            h5(align = "left",a(href = "https://sccwrp-my.sharepoint.com/:b:/g/personal/leahth_sccwrp_org/EW-0f67Xm9lAqbNjMPmTTUABa-8qmoYrxM0lbeciC7AusQ?e=87igqQ", 'Chemical Transfer Studies')),
+            
+            h5(align = "left",a(href = "https://sccwrp-my.sharepoint.com/:b:/g/personal/leahth_sccwrp_org/EShaOE5WwQxAikhEQpDPH80BKvXtB7nfM6bNX-Xto6HHfQ?e=gkXvJP", 'Chemical Co-Exposure Studies'))),
+        
 ), #close tab
 
 #### Data Submission UI ####
