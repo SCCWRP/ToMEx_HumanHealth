@@ -283,7 +283,7 @@ ui <- dashboardPage(
                      br(),
                      br(),
                      #Twitter icon
-                     menuItem("Aquatic Organisms", href = "https://sccwrp.shinyapps.io/aq_mp_tox_shiny/", icon = icon("fish")),
+                     menuItem("Aquatic Organisms", href = "https://sccwrp.shinyapps.io/tomex_20_aquatic_organisms/", icon = icon("fish")),
                      br(),
                      br(),
                      #Twitter icon
@@ -316,7 +316,7 @@ tabItem(tabName = "Welcome",
                      h3("Toxicity of Microplastics Explorer 2.0", align = "center"), 
                      
                      p("The Toxicity of Microplastics Explorer 2.0 (ToMEx 2.0) is a major expansion of the orginal ToMEx database coordinated by SCCWRP through
-                              a four-part virtual workshop series of approximately 70 researchers from 14 different nations. ToMEx 2.0 will be released to the public in fall 2023."),
+                              a four-part virtual workshop series of approximately 70 researchers from 14 different nations."),
                      
                      strong(p("Disclaimer: When using ToMEx 2.0, it is highly recommended that underlying data are carefully scrutinized before finalizing analyses or drawing major conclusions.")),
                      
@@ -330,7 +330,7 @@ tabItem(tabName = "Welcome",
                     to microplastics. Data is extracted from existing, peer-reviewed manuscripts containing 
                     toxicity data pertaining to microplastics."),
                      
-                     p("A full length description of the database and web application is published in ", 
+                     p("A full length description of the ToMEx 1.0 database and web application is published in ", 
                        a(href = "https://www.springeropen.com/collections/sccwrp", 'Microplastics and Nanoplastics'),
                        ". To access the open access manuscript, ", a(href = "https://microplastics.springeropen.com/articles/10.1186/s43591-022-00032-4", 'click here'),"."),
                      
@@ -354,27 +354,56 @@ tabItem(tabName = "Welcome",
         
         #bottom right box  
         box(status = "primary", width = 12, 
-            h3("Contributors", align = "center"), 
+            h3("ToMEx 2.0 Steering Committee", align = "center"),
             
-            p(align = "center", a(href = "https://www.sccwrp.org/about/staff/leah-thornton-hampton/", 'Dr. Leah Thornton Hampton'),", Southern California Coastal Water Research Project ", 
-              tags$a(href="https://twitter.com/DrLeahTH", icon("twitter")), tags$a(href="https://github.com/leahth", icon("github"))),
+            p(align = "center", "Dr. Leah Thornton Hampton, Southern California Coastal Water Research Project"),
             
-            p(align = "center", a(href = "https://agency.calepa.ca.gov/staffdirectory/detail.asp?UID=69294&BDO=7&VW=DET&SL=S", 'Dr. Scott Coffin'),", California State Water Resources Control Board", 
-              tags$a(href="https://twitter.com/DrSCoffin", icon("twitter")), tags$a(href="https://github.com/ScottCoffin", icon("github"))),
+            p(align = "center", "Dana Briggs Wyler, Southern California Coastal Water Research Project"),
             
-            p(align = "center", a(href = "https://www.heililowman.com/", 'Dr. Heili Lowman'),", University of Nevada Reno ", 
-              tags$a(href="https://twitter.com/heili_lowman", icon("twitter")), tags$a(href="https://github.com/hlowman", icon("github"))), 
+            p(align = "center", "Dr. Bethanie Carney Almroth, University of Gothenburg"),
             
-            p(align = "center", a(href = "https://www.sccwrp.org/about/staff/emily-darin/", 'Emily Darin'),", Southern California Coastal Water Research Project",
-              tags$a(href="https://github.com/EmilyDarin", icon("github"))),
+            p(align = "center", "Dr. Scott Coffin, California Office of Environmental Health Hazard Assessment"),
             
-            p(align = "center", a(href = "https://www.sfei.org/users/liz-miller", 'Dr. Ezra Miller'),", San Franciso Estuary Institute"),
+            p(align = "center", "Dr. Win Cowger, Moore Institute for Plastic Pollution Research"),
             
-            p(align = "center", a(href = "https://rochmanlab.com/people/", 'Dr. Ludovic Hermabessiere'),", University of Toronto", 
-              tags$a(href="https://twitter.com/HermabessiereL", icon("twitter"))),
+            p(align = "center", "Darragh Doyle, University of Gothenburg"),
             
-            p(align = "center", a(href = "https://rochmanlab.com/people/", 'Hannah De Frond'),", University of Toronto", 
-              tags$a(href="https://twitter.com/HanDefrond", icon("twitter"))),
+            p(align = "center", "Eden Hataley, University of Toronto"),
+            
+            p(align = "center", "Dr. Sara Hutton, GSI Environmental Inc."),
+            
+            p(align = "center", "Dr. Magdalena Mair, University of Bayreuth"),
+            
+            p(align = "center", "Dr. Ezra Miller, San Francisco Estuary Institute"),
+            
+            p(align = "center", "Dr. Laura Monclús, Norwegian Geotechnical Institute"),
+            
+            p(align = "center", "Emma Sharpe, Western Washington University"),
+            
+            p(align = "center", "Dr. Samreen Siddiqui, Oregon State University"),
+            
+            p(align = "center", "Dr. Alvine Mehinto, Southern California Coastal Water Research Project"),
+            
+            h3("ToMEx 2.0 Workgroup Participants", align = "center"),
+            
+            p("To view the full list of ToMEx 2.0 Workgroup Participants", 
+              a(href = "https://sccwrp-my.sharepoint.com/:b:/g/personal/leahth_sccwrp_org/Ec1tJoQwukVIiHjv52mf7rABBw4bpXDNl-DIwseQyOlBoA?e=toryF9", 'click here'), align = "center"),
+            
+            h3("ToMEx 1.0 Contributors", align = "center"), 
+            
+            p(align = "center", "Dr. Leah Thornton Hampton, Southern California Coastal Water Research Project"),
+            
+            p(align = "center", "Dr. Heili Lowman, University of Nevada Reno"),
+            
+            p(align = "center", "Dr. Scott Coffin, California State Water Resources Control Board"),
+            
+            p(align = "center", "Emily Darin, Southern California Coastal Water Research Project"),
+            
+            p(align = "center", "Dr. Ezra Miller, San Francisco Estuary Institute"),
+            
+            p(align = "center", "Dr. Ludovic Hermabessiere, University of Toronto"),
+            
+            p(align = "center", "Hannah De Frond, University of Toronto"),
             
             p(align = "center", "Vera de Ruitjer, Wageningen University"),
             
@@ -386,23 +415,21 @@ tabItem(tabName = "Welcome",
             
             p(align = "center", "Laura Monclús Anglada, Norwegian University of Science and Technology"),
             
-            p(align = "center", a(href = "https://www.sccwrp.org/about/staff/syd-kotar/", "Sydney Kotar"),", Southern California Coastal Water Research Project"),
+            p(align = "center", "Sydney Kotar, Southern California Coastal Water Research Project"),
             
-            p(align = "center", a(href = "https://branderlab.net/", 'Dr. Susanne Brander'),", Oregon State University",
-              tags$a(href="https://twitter.com/smbrander", icon("twitter"))),
+            p(align = "center", "Dr. Win Cowger, Moore Institute for Plastic Pollution Research"),
             
-            p(align = "center", a(href = "https://www.ntnu.edu/employees/martin.wagner", 'Dr. Martin Wagner'),", Norwegian University of Science and Technology",
-              tags$a(href="https://twitter.com/martiwag", icon("twitter"))),
+            p(align = "center", "Dr. Susanne Brander, Oregon State University"),
             
-            p(align = "center", a(href = "https://www.wur.nl/en/Persons/Bart-prof.dr.-AA-Bart-Koelmans.htm", 'Dr. Bart Koelmans'),", Wageningen University",
-              tags$a(href="https://twitter.com/MicroplasticLab", icon("twitter"))),
+            p(align = "center", "Dr. Martin Wagner, Norwegian University of Science and Technology"),
             
-            p(align = "center", a(href = "https://rochmanlab.com/", 'Dr. Chelsea Rochman'),", University of Toronto",
-              tags$a(href="https://twitter.com/ChelseaRochman", icon("twitter"))),
+            p(align = "center", "Dr. Bart Koelmans, Wageningen University"),
             
-            p(align = "center", a(href = "https://www.sccwrp.org/about/staff/alvina-mehinto/", 'Dr. Alvine Mehinto'),", Southern California Coastal Water Research Project"),
+            p(align = "center", "Chelsea Rochman, University of Toronto"),
             
-            p(align = "center", a(href = "https://www.sccwrp.org/about/staff/steve-weisberg/", 'Dr. Steve Weisberg'),", Southern California Coastal Water Research Project")), 
+            p(align = "center", "Dr. Alvine Mehinto, Southern California Coastal Water Research Project"),
+            
+            p(align = "center", "Dr. Steve Weisberg, Southern California Coastal Water Research Project")), 
         
         #Logos with links to organizations
         box(status = "primary", width = 12, align = "center",  
@@ -1064,22 +1091,14 @@ tabItem(tabName = "Resources",
 tabItem(tabName = "Submission", 
         
         box(title = "Data Submission", width = 6, status = "primary",
-            p("The ToMEx Database is currently being updated through the ToMEx 2.0 Workgroup. For more information or to find out how to get invovled, please contact tomex@sccwrp.org or visit the ",
-              a(href ="https://microplastics.sccwrp.org/",
-                'SCCWRP ToMEx 2.0 Webpage', .noOWs = "outside"),"."),
             
-            # p("To submit new data to ToMEx, download the data submission template using the link below. Complete the submission template
-            #   using the embedded descriptions and the ", 
-            #   a(href ="https://sccwrp-my.sharepoint.com/:b:/g/personal/leahth_sccwrp_org/EeyE7n7JZdJPi_EYUD_D-dsBxNv5qlBtzwihmr9SbxH_Og?e=Crfu6Z",
-            #     'Data Category Descriptions', .noOWs = "outside"),
-            #   ". Once the data submission template is completed, upload the completed template using the button below."),
+            p("To submit new data to ToMEx, complete a Data Mining Template using the appropriate Guide, which may be found on the Resources tab. Submit completed templates using the button below."),
+            
             br(),
             p("For questions regarding data submission or to check to see if data from a specific study has already been uploaded to ToMEx, please email tomex@sccwrp.org"),
             br(),
-            # p(align = "center", downloadButton(href = "https://sccwrp-my.sharepoint.com/:x:/g/personal/leahth_sccwrp_org/EfKDcb9J1ShHup4Js_NVZ_kBjGVqYfvVQ-2HPDAb79YOVg?e=Pq1S4V", label = "Download Data Submission Template", icon("download"), style="color: #fff; background-color: #337ab7; border-color: #2e6da4")),
-            br(),
-            # p(align = "center", actionButton(inputId = "submit", onclick = "window.open('https://sccwrp-my.sharepoint.com/:f:/g/personal/leahth_sccwrp_org/EhnzSiN8GqZFjnGpTbNJgskBGaWp0sVKtnB9nrqszAYoQA')", label = "Upload Validated Data Template", icon("file-upload"), style="color: #fff; background-color:  #117a65; border-color:  #0e6655"))
-            ),
+            p(align = "center", actionButton(inputId = "submit", onclick = "window.open('https://sccwrp-my.sharepoint.com/:f:/g/personal/leahth_sccwrp_org/EhnzSiN8GqZFjnGpTbNJgskBGaWp0sVKtnB9nrqszAYoQA')", label = "Upload Data Template", icon("file-upload"), style="color: #fff; background-color:  #117a65; border-color:  #0e6655"))
+        ),
         
 ), #close tab
 
