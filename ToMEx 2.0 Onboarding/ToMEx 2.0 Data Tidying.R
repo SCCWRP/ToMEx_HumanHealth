@@ -791,6 +791,14 @@ tomex2.0_human_setup_final$reference.material = fct_collapse(tomex2.0_human_setu
                                       "no"= c("N", "No"),
                                       "yes"= c("Y", "Yes"))
 
+tomex2.0_human_setup_final$weathered.biofouled = fct_collapse(tomex2.0_human_setup_final$weathered.biofouled,
+                                                             "no"= c("N", "No"),
+                                                             "yes"= c("Y", "Yes"))
+
+tomex2.0_human_setup_final$density.reported.estimated = fct_collapse(tomex2.0_human_setup_final$density.reported.estimated,
+                                                              "reported"= c("Reported", "reported"),
+                                                              "estimated"= c("Estimated", "estimated"))
+
 tomex2.0_human_setup_final$exposure.media.general = fct_collapse(tomex2.0_human_setup_final$exposure.media,
                                           "artificial_medium" = c("DMEM", "culture medium DMEM", "LHC-9 medium","culture medium DMEMF12", "culture media", "culture medium", "RPMI 1610 medium", 
                                                                   "dulbecco modified eagle medium" , "DMEM high glucose", "endothelial medium","HamsF12", "MEM", 
