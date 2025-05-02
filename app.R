@@ -282,12 +282,12 @@ ui <- dashboardPage(
                      menuItem("Contact", tabName = "Contact", icon = icon("envelope")),
                      br(),
                      br(),
-                     #Twitter icon
-                     menuItem("Aquatic Organisms", href = "https://sccwrp.shinyapps.io/tomex_20_aquatic_organisms/", icon = icon("fish")),
+                     #Links to other tomex sites
+                     menuItem("Aquatic Organisms v1.1", href = "https://sccwrp.shinyapps.io/aq_mp_tox_shiny/", icon = icon("fish")),
+                     menuItem("Aquatic Organisms v2.0", href = "https://sccwrp.shinyapps.io/tomex_20_aquatic_organisms/", icon = icon("fish")),
                      br(),
-                     br(),
-                     #Twitter icon
-                     menuItem("Follow Us on Twitter!", href = "https://twitter.com/ToMExApp", icon = icon("twitter")))
+                     menuItem("Human Health v1.0", href = "https://sccwrp.shinyapps.io/human_mp_tox_shiny-/", icon = icon("user")),
+                     br())
                    
   ), #End dashboard sidebar
   
