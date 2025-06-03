@@ -284,7 +284,7 @@ ui <- dashboardPage(
                      br(),
                      menuItem("GitHub", href = "https://github.com/SCCWRP/ToMEx_HumanHealth", icon = icon("github")),
                      br(),
-                     menuItem("Human Health v2.0", href = "https://sccwrp.shinyapps.io/aq_mp_tox_shiny/", icon = icon("user")),
+                     menuItem("Aquatic Organisms v2.0", href = "https://sccwrp.shinyapps.io/aq_mp_tox_shiny/", icon = icon("fish")),
                      br())
                    
   ), #End dashboard sidebar
@@ -318,7 +318,7 @@ tabItem(tabName = "Welcome",
                      
                      p("To access previous versions of the ToMEx database and web application, ", a(href = "https://github.com/SCCWRP/human_mp_tox_shiny-", 'click here.')),
                      
-                     strong(p("Disclaimer: When using ToMEx 2.0, it is highly recommended that underlying data are carefully scrutinized before finalizing analyses or drawing major conclusions.")),
+                     strong(p("Disclaimer: ToMEx is an evolving, community-built tool. The manuscript describing ToMEx 2.0 is currently under peer review. When using ToMEx 2.0, it is highly recommended that underlying data are carefully scrutinized before finalizing analyses or drawing major conclusions.")),
                      
                      h3("What is the Microplastics Toxicity Database?", align = "center"), 
                      
