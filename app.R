@@ -279,7 +279,8 @@ ui <- dashboardPage(
                      menuItem("Study Screening", tabName = "Screening", icon = icon("check-circle")),
                      menuItem("Resources", tabName = "Resources", icon = icon("question-circle")),
                      menuItem("Data Submission", tabName = "Submission", icon = icon("fas fa-file-upload")),
-                     menuItem("Contact", tabName = "Contact", icon = icon("envelope")),
+                     menuItem("Report Issue", tabName = "Issue", icon = icon("bell")),
+                     menuItem("Citation", tabName = "Citation", icon = icon("book")),
                      br(),
                      br(),
                      menuItem("GitHub", href = "https://github.com/SCCWRP/ToMEx_HumanHealth", icon = icon("github")),
@@ -1102,15 +1103,32 @@ tabItem(tabName = "Submission",
         
 ), #close tab
 
-#### Contact UI ####
+##### Report Issue UI ####
 
-tabItem(tabName = "Contact", 
+tabItem(tabName = "Issue", 
         
-        box(title = "Contact", width = 6, status = "primary",
+        box(title = "Report Issue", width = 12, status = "primary",
             p("For scientific and technical questions, please email tomex@sccwrp.org."),
+            p("To report errors in the database or the code, please notify the ToMEx team by posting an ", a(href = "https://github.com/SCCWRP/ToMEx_HumanHealth/issues", "issue on GitHub.")),
+            p("Issues will be reviewed on a quarterly basis. Corrections, if necessary, will be incorporated with new version releases.")
         ),
         
-)#closes tab
+),#closes tab
+
+##### Citation UI ####
+
+tabItem(tabName = "Citation", 
+        
+        box(title = "Citation", width = 12, status = "primary",
+            p("Suggested citation:"),
+            br(),
+            p(paste0("Thornton Hampton, L.M., Wyler, D.B., Carney Almroth, B., Coffin, S., Cowger, W., Doyle, D., ... Mehinto, A.C. (2025). ",
+                     "Toxicity of Microplastics Explorer (Version 2.0) [Shiny application]. ",
+                     "https://sccwrp.shinyapps.io/aq_mp_tox_shiny/. Accessed ", 
+                     format(Sys.Date(), "%B %d, %Y"), "."))
+        ),
+        
+) #closes tab
 
 #following three parentheses close out UI. Do not delete. 
 )))   
